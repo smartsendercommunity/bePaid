@@ -32,16 +32,6 @@ function send_forward($inputJSON, $link){
     curl_close($descriptor);
     return $itog;
 }
-function send_bearer($url, $token, $type = "GET", $param = []){
-    $descriptor = curl_init($url);
-    curl_setopt($descriptor, CURLOPT_POSTFIELDS, json_encode($param));
-    curl_setopt($descriptor, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($descriptor, CURLOPT_HTTPHEADER, array('User-Agent: M-Soft Integration', 'Content-Type: application/json', 'Authorization: Bearer '.$token)); 
-    curl_setopt($descriptor, CURLOPT_CUSTOMREQUEST, $type);
-    $itog = curl_exec($descriptor);
-    curl_close($descriptor);
-    return $itog;
-}
 function send_auth($inputJSON, $link, $user, $psw){
     $request = 'POST';	
     $descriptor = curl_init($link);
@@ -79,7 +69,7 @@ if ($result["state"] === false) {
 }
 
 // Формирование данных
-$send_data["checkout"]["test"] = true;
+$send_data["checkout"]["test"] = true;  // Закометировать для отключения тестового режима
 $send_data["checkout"]["transaction_type"] = "payment";
 $send_data["checkout"]["order"]["tracking_id"] = $input["userId"]."-".mt_rand(100000, 999999);
 $send_data["checkout"]["order"]["description"] = $input["description"];
