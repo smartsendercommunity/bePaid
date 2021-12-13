@@ -21,4 +21,4 @@
 Возможны индивидуальные условия.</p>
 
 
-<a href="https://bepaid.by">bePaid</a>
+<a href="https://bepaid.by"><span class="orange">be</span>Paid<span style="display: none;">Простые платежи для бизнеса</span></a>
