@@ -21,4 +21,4 @@
 Возможны индивидуальные условия.</p>
 
 
-<a href="https://bepaid.by"><span style="color: #e36f10">be</span>Paid</a>
+<a href="https://bepaid.by"><span style="color:orange">be</span>Paid</a>
