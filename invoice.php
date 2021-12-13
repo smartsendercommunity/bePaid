@@ -77,7 +77,7 @@ if ($result["state"] === false) {
 }
 
 // Формирование данных
-$send_data["checkout"]["test"] = true;
+$send_data["checkout"]["test"] = true;      // закоментировать для отключения тестового режима
 $send_data["checkout"]["transaction_type"] = "payment";
 $send_data["checkout"]["order"]["amount"] = round(str_replace(array(",", " "), array("."), $input["amount"]) * 100);
 $send_data["checkout"]["order"]["currency"] = $input["currency"];
