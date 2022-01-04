@@ -1,6 +1,6 @@
 <?php
 
-// Данные интеграции с LiqPay
+// Данные интеграции с bePaid
 $merchant_id = "";
 $merchant_key = "";
 $merchant_rsa = "";
