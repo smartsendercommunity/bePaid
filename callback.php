@@ -59,6 +59,14 @@ if ($a != 1) {
     exit;
 }
 
+// Проверка состояния оплаты
+if ($input["transaction"]["payment"]["status"] != "successful") {
+    $result["state"] = true;
+    $result["message"] = "wait status is successful";
+    echo json_encode($result);
+    exit;
+}
+
 // Запуск триггера в Smart Sender
 $userData = explode("-", $input["transaction"]["tracking_id"]);
 $userId = $userData[0];
