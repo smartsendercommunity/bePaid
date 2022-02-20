@@ -82,6 +82,7 @@ if ($input["action"] == "getInfo") {
         foreach ($fileSubscription as $oneSubscription) {
             $result[] = json_decode(send_auth("GET", "https://api.bepaid.by/subscriptions/".$oneSubscription, $merchant_id, $merchant_key), true);
         }
+        array_reverse($result);
         echo json_encode($result);
         exit;
     }
