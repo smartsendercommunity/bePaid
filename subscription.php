@@ -34,7 +34,11 @@ function send_forward($inputJSON, $link){
 function send_auth($inputJSON, $link, $user, $psw){
     $request = 'POST';	
     $descriptor = curl_init($link);
+    if ($inputJSON == "GET") {
+        $request = 'GET';
+    } else {
     curl_setopt($descriptor, CURLOPT_POSTFIELDS, $inputJSON);
+    }
     curl_setopt($descriptor, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($descriptor, CURLOPT_USERPWD, "$user:$psw");
     curl_setopt($descriptor, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json', 'X-API-Version: 2')); 
@@ -70,13 +74,13 @@ if ($input["action"] == "getInfo") {
             echo json_encode($result);
             exit;
         } else {
-            $bepaid = json_decode(send_auth(json_encode($send_data), "https://api.bepaid.by/subscriptions/".$input["subscriptionId"], $merchant_id, $merchant_key), true);
+            $bepaid = json_decode(send_auth("GET", "https://api.bepaid.by/subscriptions/".$input["subscriptionId"], $merchant_id, $merchant_key), true);
             echo json_encode($bepaid);
             exit;
         }
     } else {
         foreach ($fileSubscription as $oneSubscription) {
-            $result[] = json_decode(send_auth(json_encode($send_data), "https://api.bepaid.by/subscriptions/".$oneSubscription, $merchant_id, $merchant_key), true);
+            $result[$oneSubscription] = json_decode(send_auth("GET", "https://api.bepaid.by/subscriptions/".$oneSubscription, $merchant_id, $merchant_key), true);
         }
         echo json_encode($result);
         exit;
