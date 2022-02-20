@@ -107,7 +107,7 @@ if ($cursor["error"] != NULL && $cursor["error"] != 'undefined') {
     }
     echo json_encode($result);
     exit;
-} else if (!is_array($cursor["collection"])) {
+} else if (count($cursor["collection"]) < 1) {
     $result["status"] = "error";
     $result["message"][] = "Корзина пользователя пустая. Для тестирования добавте товар в корзину.";
     echo json_encode($result);
