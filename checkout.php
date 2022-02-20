@@ -1,6 +1,6 @@
 <?php
 
-// v1   19.11.2021
+// v1.01   20.02.2022
 // Powered by Smart Sender
 // https://smartsender.com
 
@@ -9,7 +9,6 @@ set_time_limit(1700);
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
-header('Access-Control-Allow-Headers: application/json');
 header('Content-Type: application/json; charset=utf-8');
 
 http_response_code(200);
@@ -56,6 +55,7 @@ function send_auth($inputJSON, $link, $user, $psw){
 }
 }
 
+// Проверка входящих данных
 if ($input["userId"] == NULL) {
     $result["state"] = false;
     $result["message"]["userId"] = "userId is missing";
@@ -79,7 +79,9 @@ if ($result["state"] === false) {
 }
 
 // Формирование данных
-$send_data["checkout"]["test"] = true;  // Закометировать для отключения тестового режима
+if ($input["test"] != NULL) {
+    $send_data["checkout"]["test"] = true;
+}
 $send_data["checkout"]["transaction_type"] = "payment";
 $send_data["checkout"]["order"]["tracking_id"] = $input["userId"]."-".mt_rand(100000, 999999);
 $send_data["checkout"]["order"]["description"] = $input["description"];
@@ -105,7 +107,7 @@ if ($cursor["error"] != NULL && $cursor["error"] != 'undefined') {
     }
     echo json_encode($result);
     exit;
-} else if (empty($cursor["collection"])) {
+} else if (!is_array($cursor["collection"])) {
     $result["status"] = "error";
     $result["message"][] = "Корзина пользователя пустая. Для тестирования добавте товар в корзину.";
     echo json_encode($result);
@@ -127,15 +129,5 @@ if ($input["posttext"] != NULL) {
 }
 $send_data["checkout"]["order"]["amount"] = round(array_sum($summ) * 100);
 $send_data["amount"] = array_sum($summ);
-
 $bepaid = json_decode(send_auth(json_encode($send_data), "https://checkout.bepaid.by/ctp/api/checkouts", $merchant_id, $merchant_key), true);
 echo json_encode($bepaid);
-
-
-
-
-
-
-
-
-

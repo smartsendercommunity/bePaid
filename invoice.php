@@ -1,6 +1,6 @@
 <?php
 
-// v1   19.11.2021
+// v1.01   20.02.2022
 // Powered by Smart Sender
 // https://smartsender.com
 
@@ -9,7 +9,6 @@ set_time_limit(1700);
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
-header('Access-Control-Allow-Headers: application/json');
 header('Content-Type: application/json; charset=utf-8');
 
 http_response_code(200);
@@ -46,6 +45,7 @@ function send_auth($inputJSON, $link, $user, $psw){
 }
 }
 
+// Проверка входящих данных
 if ($input["userId"] == NULL) {
     $result["state"] = false;
     $result["message"]["userId"] = "userId is missing";
@@ -77,7 +77,9 @@ if ($result["state"] === false) {
 }
 
 // Формирование данных
-$send_data["checkout"]["test"] = true;      // закоментировать для отключения тестового режима
+if ($input["test"] != NULL) {
+    $send_data["checkout"]["test"] = true;
+}
 $send_data["checkout"]["transaction_type"] = "payment";
 $send_data["checkout"]["order"]["amount"] = round(str_replace(array(",", " "), array("."), $input["amount"]) * 100);
 $send_data["checkout"]["order"]["currency"] = $input["currency"];
@@ -91,13 +93,3 @@ if ($input["phone"] != NULL) {
 
 $bepaid = json_decode(send_auth(json_encode($send_data), "https://checkout.bepaid.by/ctp/api/checkouts", $merchant_id, $merchant_key), true);
 echo json_encode($bepaid);
-
-
-
-
-
-
-
-
-
-

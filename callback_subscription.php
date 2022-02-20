@@ -1,6 +1,6 @@
 <?php
 
-// v1.01   20.02.2022
+// v1   20.02.2022
 // Powered by Smart Sender
 // https://smartsender.com
 
@@ -45,24 +45,40 @@ function send_bearer($url, $token, $type = "GET", $param = []){
 }
 }
 
-// Верификация данных
-$public_key = str_replace(array("\r\n", "\n"), '', $merchant_rsa);
-$public_key = chunk_split($public_key, 64);
-$public_key = "-----BEGIN PUBLIC KEY-----\n$public_key-----END PUBLIC KEY-----";
-$signature = base64_decode($headers["Content-Signature"]);
-$key = openssl_pkey_get_public($public_key);
-$a = openssl_verify($inputJSON, $signature, $key, OPENSSL_ALGO_SHA256);
-if ($a != 1) {
+// Проверка авторизации
+if (stripos($headers["Authorization"], "basic") !== false) {
+    $auth = explode(" ", $headers["Authorization"])[1];
+    $result["auth"] = $auth;
+    $login = base64_decode($auth);
+    if ($login != $merchant_id.":".$merchant_key) {
+        $result["state"] = false;
+        $result["error"]["authorization"] = "Authorization is failed";
+        echo json_encode($result);
+        send_forward(json_encode($result), $logUrl);
+        exit;
+    }
+}
+
+// Поиск подписки и проверка данных
+$userData = explode("-", $input["tracking_id"]);
+$userId = $userData[0];
+if (file_exists("subscription/".$userId.".json") === true) {
+    $fileSubscription = json_decode(file_get_contents("subscription/".$userId.".json"), true);
+} else {
     $result["state"] = false;
-    $result["error"]["message"] = "signature if failed";
+    $result["error"]["subscription"] = "Subscription not found";
+    echo json_encode($result);
+    exit;
+}
+if (in_array($input["id"], $fileSubscription) !== true) {
+    $result["state"] = false;
+    $result["error"]["subscriptionId"] = "This subscriptionId does not belong to the specified user";
     echo json_encode($result);
     exit;
 }
 
 // Запуск триггера в Smart Sender
-$userData = explode("-", $input["transaction"]["tracking_id"]);
-$userId = $userData[0];
-$trigger["name"] = $_GET["action"];
+$trigger["name"] = $_GET["action"]."-".$input["state"];
 $result["SmartSender"] = json_decode(send_bearer("https://api.smartsender.com/v1/contacts/".$userId."/fire", $ss_token, "POST", $trigger), true);
 $result["state"] = true;
 echo json_encode($result);
