@@ -157,6 +157,7 @@ if ($input["action"] == "getInfo") {
         $send_data["plan"]["trial"]["interval_unit"] = "hour";
         $send_data["plan"]["trial"]["as_first_payment"] = true;
     }
+    $send_data["settings"]["customer_fields"]["visible"][] = "email";
     $send_data["tracking_id"] = $input["userId"]."-".mt_rand(100000, 999999);
     $send_data["notification_url"] = $url."/callback_subscription.php?action=".$input["action"];
     
